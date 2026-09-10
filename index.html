@@ -149,6 +149,15 @@
         .trans-card { border-radius: 20px; overflow: hidden; padding: 10px; }
         .trans-card img { width: 100%; height: auto; border-radius: 14px; display: block; filter: contrast(1.05); }
 
+        /* ستايل تكبير صور الريفيوهات (Lightbox) */
+        .review-img { cursor: pointer; transition: 0.3s; }
+        .review-img:hover { opacity: 0.7; transform: scale(1.02); }
+        .modal { display: none; position: fixed; z-index: 2000; padding-top: 60px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(8px); }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 80vh; border-radius: 15px; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(255,102,0,0.3); animation: zoom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .close-btn { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .close-btn:hover { color: var(--primary); background: rgba(255,255,255,0.2); }
+        @keyframes zoom { from {transform:scale(0.5); opacity:0;} to {transform:scale(1); opacity:1;} }
+
         .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .step-item { padding: 30px 20px; text-align: center; position: relative; overflow: hidden; }
         .step-num { width: 50px; height: 50px; background: rgba(255,102,0,0.1); color: var(--primary-light); border: 1px solid rgba(255,102,0,0.3); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 20px; transform: rotate(-5deg); transition: 0.3s; }
@@ -202,7 +211,6 @@
             
             .text-logo { font-size: 1.2rem; }
             .nav-btn { padding: 8px 16px; font-size: 0.8rem; }
-
             #floating-pen { display: none; }
 
             .hero { padding: 120px 15px 40px; text-align: center; }
@@ -235,15 +243,16 @@
             .edu-grid h2 { font-size: 1.8rem; text-align: center; }
 
             .trans-badge { font-size: 0.8rem; padding: 8px 15px; display: flex; flex-direction: column; }
-
             .pricing-tabs-container { flex-direction: column; width: 100%; gap: 10px; }
             .tab-btn { width: 100%; max-width: 100%; font-size: 1rem; padding: 12px; }
-            
             .pkg-card, .compare-card { padding: 25px 20px; }
             .pkg-price { font-size: 2.2rem; }
-
             .footer-logo { font-size: 2rem; }
             footer { padding: 40px 15px 20px; }
+            
+            /* تظبيط مقاس الصورة المكبرة في الموبايل */
+            .modal-content { max-width: 95%; max-height: 70vh; margin-top: 20px; }
+            .close-btn { top: 10px; right: 20px; }
         }
 
         @media (max-width: 400px) {
@@ -254,6 +263,12 @@
     </style>
 </head>
 <body>
+
+    <!-- نافذة تكبير الصور -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="zoomedImg">
+    </div>
 
     <div id="floating-pen">
         <svg width="60" height="180" viewBox="0 0 100 300" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -301,8 +316,8 @@
                 </div>
             </div>
             <div class="hero-img-box" data-aos="zoom-in" data-aos-duration="1200">
-                <!-- تم إضافة images/ قبل أسماء الصور -->
-                <img src="images/coach.jpg" onerror="this.onerror=null; this.src='images/coach.png';" alt="كابتن أحمد جمال" class="hero-img">
+                <!-- تم مسح مسار images/ لتعمل الصور على جيت هاب مباشرة -->
+                <img src="coach.png" onerror="this.onerror=null; this.src='coach.jpg';" alt="كابتن أحمد جمال" class="hero-img">
             </div>
         </div>
     </section>
@@ -353,25 +368,26 @@
             <span class="trans-badge"><i class="fa-solid fa-shield-check"></i> كل التحولات لأبطال سكري من النوع الأول بدون منشطات</span>
         </div>
         <div class="trans-grid">
-            <div class="glass-card trans-card" data-aos="zoom-in"><img src="images/trans1.jpg" onerror="this.onerror=null; this.src='images/trans1.png';" alt="تحول بطل"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="100"><img src="images/trans2.jpg" onerror="this.onerror=null; this.src='images/trans2.png';" alt="تحول بطل"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="200"><img src="images/trans3.jpg" onerror="this.onerror=null; this.src='images/trans3.png';" alt="تحول بطل"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="300"><img src="images/trans4.jpg" onerror="this.onerror=null; this.src='images/trans4.png';" alt="تحول بطل"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="400"><img src="images/trans5.jpg" onerror="this.onerror=null; this.src='images/trans5.png';" alt="تحول بطل"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in"><img src="trans1.jpg" alt="تحول بطل"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="100"><img src="trans2.jpg" alt="تحول بطل"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="200"><img src="trans3.jpg" alt="تحول بطل"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="300"><img src="trans4.jpg" alt="تحول بطل"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="400"><img src="trans5.jpg" alt="تحول بطل"></div>
         </div>
     </section>
     
     <section id="reviews">
         <div class="section-header" data-aos="fade-up">
             <h2>آراء <span class="text-gradient-primary">العملاء</span></h2>
-            <p>تجارب وآراء حقيقية لأبطالنا المشتركين مع كابتن أحمد جمال.</p>
+            <p>اضغط على أي صورة لتكبيرها وقراءة رأي البطل بوضوح.</p>
         </div>
         <div class="trans-grid">
-            <div class="glass-card trans-card" data-aos="zoom-in"><img src="images/review1.jpg" onerror="this.onerror=null; this.src='images/review1.png';" alt="ريفيو"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="100"><img src="images/review2.jpg" onerror="this.onerror=null; this.src='images/review2.png';" alt="ريفيو"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="200"><img src="images/review3.jpg" onerror="this.onerror=null; this.src='images/review3.png';" alt="ريفيو"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="300"><img src="images/review4.jpg" onerror="this.onerror=null; this.src='images/review4.png';" alt="ريفيو"></div>
-            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="400"><img src="images/review5.jpg" onerror="this.onerror=null; this.src='images/review5.png';" alt="ريفيو"></div>
+            <!-- تم إضافة كلاس review-img وأمر onclick لتشغيل نافذة التكبير -->
+            <div class="glass-card trans-card" data-aos="zoom-in"><img src="review1.png" onerror="this.onerror=null; this.src='review1.jpg';" class="review-img" onclick="openModal(this.src)" alt="ريفيو"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="100"><img src="review2.jpg" onerror="this.onerror=null; this.src='review2.png';" class="review-img" onclick="openModal(this.src)" alt="ريفيو"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="200"><img src="review3.jpg" onerror="this.onerror=null; this.src='review3.png';" class="review-img" onclick="openModal(this.src)" alt="ريفيو"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="300"><img src="review4.jpg" onerror="this.onerror=null; this.src='review4.png';" class="review-img" onclick="openModal(this.src)" alt="ريفيو"></div>
+            <div class="glass-card trans-card" data-aos="zoom-in" data-aos-delay="400"><img src="review5.jpg" onerror="this.onerror=null; this.src='review5.png';" class="review-img" onclick="openModal(this.src)" alt="ريفيو"></div>
         </div>
     </section>
 
@@ -647,6 +663,16 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ once: true, offset: 50, duration: 800 });
+
+        // سكريبت تشغيل الـ Lightbox للصور
+        function openModal(imgSrc) {
+            document.getElementById('imageModal').style.display = "block";
+            document.getElementById('zoomedImg').src = imgSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = "none";
+        }
 
         function switchTab(type) {
             const tab1 = document.getElementById('tab-1month');
